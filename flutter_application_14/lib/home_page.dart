@@ -1,9 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_application_14/alljobs.dart';
 import 'package:flutter_application_14/detiles.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_application_14/network.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
@@ -14,29 +12,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  var network = Network();
+
   String x = '';
   @override
   void initState() {
-    getUrl();
+    network.getUrl();
     super.initState();
-  }
-
-  Future<List<Jobs>?> getUrl() async {
-    var url =
-        Uri.parse('https://remotive.io/api/remote-jobs?category=software-dev');
-    http.Response respone = await http.get(url);
-    if (respone.statusCode == 200) {
-      String data = respone.body;
-      var jobsList = jsonDecode(data);
-      Iterable jobsList2 = jobsList['jobs'];
-      List<Jobs> listCatgory = [];
-
-      for (var item in jobsList2) {
-        listCatgory.add(Jobs.fromJson(item));
-      }
-      return listCatgory;
-    }
-    return null;
   }
 
   @override
@@ -46,7 +28,7 @@ class _MyHomePageState extends State<MyHomePage> {
           title: const Text('Task-Api'),
         ),
         body: FutureBuilder<List<Jobs>?>(
-          future: getUrl(),
+          future: network.getUrl(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               var jobs = snapshot.data;
